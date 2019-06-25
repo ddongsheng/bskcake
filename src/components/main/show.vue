@@ -66,7 +66,7 @@
           {{item.Size}}
           <div id="app">
             <div class="purchase-c">
-              <div class="purchase-c-1">{{money}}.00</div>
+              <div class="purchase-c-1" v-if="isLoad">{{sizeList[selNum].CurrentPrice*sizeList[selNum].num}}.00</div>
               <div class="purchase-c-2">
                 <div class="purchase-c-2-left">已优惠：</div>
                 <div class="purchase-c-2-right">0.00</div>
@@ -112,9 +112,9 @@
     <div class="am-u-sm-12 clplr bgw mt4 p4">
       <div class="am-u-sm-6 clplr amount-a">购买数量</div>
       <div class="am-u-sm-6 clplr amount-b">
-        <span>+</span>
-        <span>1</span>
-        <span>-</span>
+        <span @click="addx">+</span>
+        <span v-if="isLoad">{{sizeList[selNum].num}}</span>
+        <span @click="del">-</span>
       </div>
     </div>
     <!-- -----底部 -->
@@ -143,7 +143,10 @@ export default {
       goods: {},
       sizeList: [],
       showData: {},
-      money:{},
+      activeList: {},
+      money: {},
+      nums: 1,
+      isLoad: false,
       selNum: 0
     };
   },
@@ -231,9 +234,25 @@ export default {
     },
     selSize(index) {
       this.selNum = index;
-      this.money=this.sizeList[this.selNum].CurrentPrice;
-      console.log(index)
+      this.money = this.sizeList[this.selNum].CurrentPrice*this.sizeList[this.selNum].num;
+      this.activeList = this.sizeList[index];
+      this.nums = this.activeList.num;
+      console.log(this.nums);
       console.log(this.sizeList[this.selNum].CurrentPrice);
+    },
+    del() {
+      var sizeList = [...this.sizeList];
+      sizeList[this.selNum].num--;
+      if (sizeList[this.selNum].num <= 1) {
+        console.log(sizeList[this.selNum]);
+        sizeList[this.selNum].num = 1;
+      }
+      this.sizeList = sizeList;
+    },
+    addx() {
+      var sizeList = [...this.sizeList];
+      sizeList[this.selNum].num++;
+      this.sizeList = sizeList;
     },
     // -----
     add() {
@@ -243,8 +262,11 @@ export default {
         CurrentPrice: this.sizeList[this.selNum].CurrentPrice, //产品价格
         Size: this.sizeList[this.selNum].Size, //产品规格
         url: this.bannerList[0], //产品购物车显示图片
-        SupplyNo: this.sizeList[this.selNum].SupplyNo //产品货号类型
+        SupplyNo: this.sizeList[this.selNum].SupplyNo, //产品货号类型
+        num: this.sizeList[this.selNum].num
       };
+      console.log(data);
+      
       this.$store.commit("add", data);
       MessageBox.confirm("加入购物车成功").then(action => {
         this.$router.push({
@@ -266,12 +288,12 @@ export default {
             }
           });
           this.showData = this.sizeList[0];
-          this.money=this.sizeList[0].CurrentPrice;
+          this.money = this.sizeList[0].CurrentPrice;
         } else {
           this.sizeList = this.goods.data.Tag.infos.CakeType;
           // console.log(this.goods.data.Tag.infos.CakeType)
           this.showData = this.goods.data.Tag.infos;
-          this.money=JSON.parse(this.sizeList[0].CurrentPrice);
+          this.money = JSON.parse(this.sizeList[0].CurrentPrice);
         }
         console.log(this.sizeList);
         console.log(this.showData);
@@ -282,6 +304,12 @@ export default {
 
         // console.log(this.goods.data.Tag)
         // console.log(this.sizeList);
+        this.sizeList.map(item => {
+          item.id = item.ID || item.Id;
+          item.num = 1;
+        });
+        this.selSize(0);
+        this.isLoad = true;
       },
       deep: true
     }
@@ -538,6 +566,10 @@ export default {
   span {
     float: right;
     line-height: r(40);
+    display: inline-block;
+    width: r(30);
+    font-size: r(30);
+    font-style: normal;
   }
 }
 

@@ -109,11 +109,6 @@ export default {
   },
   mounted() {
     this.pageInit();
-    // Toast({
-    //   message: "加入购物成功",
-    //   position: "bottom",
-    //   duration: 5000
-    // });
   },
   methods: {
     pageInit() {

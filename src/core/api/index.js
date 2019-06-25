@@ -1,5 +1,5 @@
 import request from "./http"
-import axios from "@/mock/mock"
+import mock from "@/mock/mock"
 
 
 var url1 = "json1811.ashx";
@@ -94,8 +94,11 @@ class Apls {
 			}
 		})
 	}
-	mokeLogin(data) {
-		return mock.get("/login", { params: data })
+	login(data) {
+		return mock.post("/login", { data })
+	}
+	edit(data){
+		return mock.post("/test", { data })
 	}
 }
 

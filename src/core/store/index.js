@@ -14,12 +14,10 @@ const state = {
 const mutations = {
 	vuexInit(state){
 		state.cartList=Store.get("cartList")||[];
-		// isLogin
 	},
 	add(state, data) {
-		if (state.cartList.length !=0) {
-			console.log("ok");
-			
+		state.cartList=Store.get("cartList")||[];
+		if (state.cartList.length !=0) {			
 			var bool=true;
 			state.cartList.forEach((item)=>{
 				if(data.id==item.id){
@@ -29,7 +27,7 @@ const mutations = {
 				}
 			})
 			if (bool) {
-				data.num=1;
+				data.num=data.num||1;
 				state.cartList.push(data);
 			}
 			state.shopCart.N++;
@@ -40,23 +38,6 @@ const mutations = {
 		}
 		Store.set("cartList",state.cartList);
 	},
-	push(state,data){
-		state.shopCart.list.forEach(ele=>{
-			if(ele.id==data){
-				ele.num--
-				if(ele.num==0){
-					ele.num=1
-				}
-			}
-		});
-	},
-	sub(state,data){
-		state.shopCart.list.forEach(ele=>{
-			if(ele.id==data){
-				ele.num++
-			}
-		})
-	}
 }
 //定义 computed(属性计算)
 const getters = {

@@ -47,6 +47,16 @@ const router = new Router({
           keepAlive:false,
         },
         component: resolve => require(['@/components/main/show'], resolve),
+      },
+      {
+        path: 'edit',
+        name: 'edit',
+        component: resolve => require(['@/components/main/edit'], resolve),
+      },
+      {
+        path: 'userinfo',
+        name: 'userinfo',
+        component: resolve => require(['@/components/main/userinfo'], resolve),
       }
     ]
   }]

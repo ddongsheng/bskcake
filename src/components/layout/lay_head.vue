@@ -20,7 +20,8 @@
           </router-link>
         </li>
         <li>
-          <div class="xiaohond">{{this.$store.state.shopCart["N"]}}</div>
+          <!-- this.$store.state.shopCart["N"] -->
+          <div class="xiaohond">{{this.$store.state.shopCart["N"] }}</div>
         </li>
       </ul>
     </div>
@@ -28,6 +29,7 @@
 </template>
 
 <script>
+import Store from "storejs";
 export default {
   data() {
     return {
@@ -64,10 +66,20 @@ export default {
       selnumImg: 0
     };
   },
-  mounted(){
-  
+  mounted() {
+    this.pageInit()
   },
   methods: {
+    pageInit(){
+      let data=Store.get("cartList");
+      var num=0;
+      if(data){
+        data.forEach(ele => {
+          num+=ele.num
+        });
+      }
+      this.$store.state.shopCart["N"]=num
+    },
     tab(index) {
       this.$router.push({
         path: this.routePath[index].path

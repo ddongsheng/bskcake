@@ -31,7 +31,7 @@
               <div class="am-u-sm-6 clplr gwc-yh-5 ng-binding" style="float:left">{{item.Size}}</div>
               <div class="am-u-sm-6 clplr gwc-yh-6 gwc-jjh">
                 <div class="am-u-sm-4 clplr" align="right" style="flex:1">
-                  <a>
+                  <a @click="jian(item)">
                     <img src="https://res.bestcake.com\m-images\order\reduce-1.png">
                   </a>
                 </div>
@@ -39,7 +39,7 @@
                   <span class="ng-binding">{{item.num}}</span>
                 </div>
                 <div class="am-u-sm-4 clplr jiahao" align="left" style="flex:1">
-                  <a @click="jia">
+                  <a @click="jia(item)">
                     <img src="https://res.bestcake.com\m-images\order\add.png">
                   </a>
                 </div>
@@ -145,11 +145,11 @@
         <div class="clplr gwc-js-1">
           <img src="https://res.bestcake.com/m-images/order/mw_firm_duihao_2.jpg" alt>
         </div>
-        <div class="clplr gwc-js-2" ng-click="checkAll()">
-          <input type="checkbox" v-model="allSel">全选
+        <div class="clplr gwc-js-2">
+          <input type="checkbox" @click="setAllsel" v-model="allSel">全选
         </div>
         <div class="clplr gwc-js-3">
-          <a>清空</a>
+          <a @click="clears">清空</a>
         </div>
         <div class="clplr gwc-js-5">
           <div class="clplr gwc-js-6">
@@ -177,11 +177,10 @@
 
 <script>
 var vm = "";
-import Store from "storejs"
+import Store from "storejs";
 export default {
   data() {
     return {
-   
       cartList: [],
       selList: [],
       allSel: false
@@ -194,9 +193,13 @@ export default {
   methods: {
     pageInit() {
       var cartList = Store.get("cartList");
-      cartList.map(item => {
-        item.bool = false;
-      });
+      console.log(cartList);
+      if (cartList) {
+        cartList.map(item => {
+          item.bool = false;
+        });
+      }
+
       this.cartList = cartList;
     },
     setSel() {
@@ -214,8 +217,46 @@ export default {
         this.selList = selList;
       }, 80);
     },
-    jia(){
-       
+    setAllsel() {
+      var setalllist = [];
+      this.cartList.forEach(item => {
+        // console.log(item);
+        if (this.allSel == false) {
+          item.bool = true;
+          setalllist.push(item);
+        } else {
+          item.bool = false;
+        }
+      });
+      this.selList = setalllist;
+    },
+    jia(item) {
+      // console.log(item);
+
+      item.num++;
+    },
+    jian(item) {
+      item.num--;
+      if (item.num == 0) {
+        item.num = 1;
+      }
+    },
+    clears() {
+      var nolist = [];
+      setTimeout(() => {
+        this.cartList.forEach(item => {
+          if (item.bool == false) {
+            nolist.push(item);
+          } else {
+            nolist = [];
+            this.$store.state.shopCart["N"] = 0;
+            this.pageInit();
+          }
+        });
+        console.log(nolist);
+        this.cartList = nolist;
+        Store.set("cartList", nolist);
+      }, 80);
     }
   },
   computed: {
@@ -223,13 +264,15 @@ export default {
     allPrice() {
       var num = 0;
       this.selList.map(item => {
-        console.log(item.num);
+        //console.log(item.bool);
         num += item.num * item.CurrentPrice;
       });
-      if (this.selList.length == this.cartList.length) {
-        this.allSel = true;
-      } else {
-        this.allSel = false;
+      if (this.cartList) {
+        if (this.selList.length == this.cartList.length) {
+          this.allSel = true;
+        } else {
+          this.allSel = false;
+        }
       }
 
       return num;
